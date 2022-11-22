@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
+        <Description>Bridge between Rhai and C#. Allows you to invoke and receive values from scripts.</Description>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="MessagePack" Version="2.4.35" PrivateAssets="all" />
+        <PackageReference Include="MessagePackAnalyzer" Version="2.4.35" PrivateAssets="all" />
+        <ProjectReference Include="..\Emik.Results\Emik.Results.csproj" />
+    </ItemGroup>
+</Project>
