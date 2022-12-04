@@ -44,8 +44,7 @@ public sealed class AST : ICloneable,
     /// <param name="y">The right-hand side.</param>
     /// <returns>They are both <see langword="null"/>, or share the same <see cref="Id"/>.</returns>
     [Pure]
-    public static bool operator ==(AST? x, AST? y) =>
-        ReferenceEquals(x, y) || (x is null ? y is null : y is not null && x.Id == y.Id);
+    public static bool operator ==(AST? x, AST? y) => x is null ? y is null : y is not null && x.Id == y.Id;
 
     /// <summary>Determines if two <see cref="AST"/> instances are unequal.</summary>
     /// <param name="x">The left-hand side.</param>
@@ -169,68 +168,68 @@ public sealed class AST : ICloneable,
 
     /// <inheritdoc />
     [Pure]
-    bool IConvertible.ToBoolean(IFormatProvider? provider) => ((IConvertible)Id).ToBoolean(provider);
+    bool IConvertible.ToBoolean(IFormatProvider provider) => ((IConvertible)Id).ToBoolean(provider);
 
     /// <inheritdoc />
     [Pure]
-    byte IConvertible.ToByte(IFormatProvider? provider) => ((IConvertible)Id).ToByte(provider);
+    byte IConvertible.ToByte(IFormatProvider provider) => ((IConvertible)Id).ToByte(provider);
 
     /// <inheritdoc />
     [Pure]
-    char IConvertible.ToChar(IFormatProvider? provider) => ((IConvertible)Id).ToChar(provider);
+    char IConvertible.ToChar(IFormatProvider provider) => ((IConvertible)Id).ToChar(provider);
 
     /// <inheritdoc />
     [NonNegativeValue, Pure]
-    decimal IConvertible.ToDecimal(IFormatProvider? provider) => ((IConvertible)Id).ToDecimal(provider);
+    decimal IConvertible.ToDecimal(IFormatProvider provider) => ((IConvertible)Id).ToDecimal(provider);
 
     /// <inheritdoc />
     [NonNegativeValue, Pure]
-    double IConvertible.ToDouble(IFormatProvider? provider) => ((IConvertible)Id).ToDouble(provider);
+    double IConvertible.ToDouble(IFormatProvider provider) => ((IConvertible)Id).ToDouble(provider);
 
     /// <inheritdoc />
     [NonNegativeValue, Pure]
-    float IConvertible.ToSingle(IFormatProvider? provider) => ((IConvertible)Id).ToSingle(provider);
+    float IConvertible.ToSingle(IFormatProvider provider) => ((IConvertible)Id).ToSingle(provider);
 
     /// <inheritdoc />
     [NonNegativeValue, Pure]
-    int IConvertible.ToInt32(IFormatProvider? provider) => ((IConvertible)Id).ToInt32(provider);
+    int IConvertible.ToInt32(IFormatProvider provider) => ((IConvertible)Id).ToInt32(provider);
 
     /// <inheritdoc />
     [NonNegativeValue, Pure]
-    long IConvertible.ToInt64(IFormatProvider? provider) => ((IConvertible)Id).ToInt64(provider);
+    long IConvertible.ToInt64(IFormatProvider provider) => ((IConvertible)Id).ToInt64(provider);
 
     /// <inheritdoc />
     [NonNegativeValue, Pure]
-    sbyte IConvertible.ToSByte(IFormatProvider? provider) => ((IConvertible)Id).ToSByte(provider);
+    sbyte IConvertible.ToSByte(IFormatProvider provider) => ((IConvertible)Id).ToSByte(provider);
 
     /// <inheritdoc />
     [NonNegativeValue, Pure]
-    short IConvertible.ToInt16(IFormatProvider? provider) => ((IConvertible)Id).ToInt16(provider);
+    short IConvertible.ToInt16(IFormatProvider provider) => ((IConvertible)Id).ToInt16(provider);
 
     /// <inheritdoc />
     [Pure]
-    string IConvertible.ToString(IFormatProvider? provider) => Id.ToString(provider);
+    string IConvertible.ToString(IFormatProvider provider) => Id.ToString(provider);
 
     /// <inheritdoc />
     [Pure]
-    object IConvertible.ToType(Type? conversionType, IFormatProvider? provider) =>
+    object IConvertible.ToType(Type? conversionType, IFormatProvider provider) =>
         conversionType is null ? Id : ((IConvertible)Id).ToType(conversionType, provider);
 
     /// <inheritdoc />
     [Pure]
-    uint IConvertible.ToUInt32(IFormatProvider? provider) => ((IConvertible)Id).ToUInt32(provider);
+    uint IConvertible.ToUInt32(IFormatProvider provider) => ((IConvertible)Id).ToUInt32(provider);
 
     /// <inheritdoc />
     [Pure]
-    ulong IConvertible.ToUInt64(IFormatProvider? provider) => ((IConvertible)Id).ToUInt64(provider);
+    ulong IConvertible.ToUInt64(IFormatProvider provider) => ((IConvertible)Id).ToUInt64(provider);
 
     /// <inheritdoc />
     [Pure]
-    ushort IConvertible.ToUInt16(IFormatProvider? provider) => ((IConvertible)Id).ToUInt16(provider);
+    ushort IConvertible.ToUInt16(IFormatProvider provider) => ((IConvertible)Id).ToUInt16(provider);
 
     /// <inheritdoc />
     [Pure]
-    DateTime IConvertible.ToDateTime(IFormatProvider? provider) => ((IConvertible)Id).ToDateTime(provider);
+    DateTime IConvertible.ToDateTime(IFormatProvider provider) => ((IConvertible)Id).ToDateTime(provider);
 
     /// <inheritdoc />
     [Pure]

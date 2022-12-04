@@ -7,11 +7,11 @@ namespace Emik.Rhainterop;
 public sealed class RhaiException : Exception
 {
     /// <inheritdoc />
-    public RhaiException(string? message)
+    public RhaiException(string message)
         : base(message) { }
 
     /// <inheritdoc />
-    public RhaiException(string? message, Exception innerException)
+    public RhaiException(string message, Exception innerException)
         : base(message, innerException) { }
 
     /// <inheritdoc />
@@ -27,4 +27,9 @@ public sealed class RhaiException : Exception
     [Pure]
     public static RhaiException Null { get; } =
         new("The parameter 'source' in 'Rhai.Eval' contained a null reference.");
+
+    /// <summary>Factory method.</summary>
+    /// <param name="message">The message to pass.</param>
+    /// <returns>A new <see cref="RhaiException"/>.</returns>
+    public static RhaiException From(string message) => new(message);
 }

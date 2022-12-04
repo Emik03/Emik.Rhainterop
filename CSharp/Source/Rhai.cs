@@ -128,8 +128,6 @@ public static class Rhai
 
         static Result<TInner, Exception> TryGet<TInner>(Memory<byte> memory) => Try(Get<TInner>, memory);
 
-        static RhaiException New(string? x) => new(x);
-
         if (result.OutErr(out var err))
             return err;
 
@@ -142,7 +140,7 @@ public static class Rhai
 
         return result.Ok
             ? TryGet<T>(mem)
-            : TryGet<string>(mem).Map(New).ErrOrCast();
+            : TryGet<string>(mem).Map(RhaiException.From).ErrOrCast();
     }
 
     [MustUseReturnValue]
