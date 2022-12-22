@@ -1,13 +1,15 @@
-use crate::{Id, IdMutex, Map, MapMutex};
+use std::collections::HashMap;
+use std::num::Wrapping;
+use std::ops::DerefMut;
+
 use rhai::packages::Package;
 use rhai::Engine;
 use rhai::OptimizationLevel;
 use rhai_fs::FilesystemPackage;
 use rhai_rand::RandomPackage;
 use rhai_sci::SciPackage;
-use std::collections::HashMap;
-use std::num::Wrapping;
-use std::ops::DerefMut;
+
+use crate::{Id, IdMutex, Map, MapMutex};
 
 thread_local! {
     static ASTS: MapMutex = HashMap::new().into();

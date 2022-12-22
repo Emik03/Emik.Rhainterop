@@ -1,16 +1,21 @@
+#region Emik.MPL
+
 // <copyright file="SpanManager.cs" company="Emik">
 // Copyright (c) Emik. This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 // </copyright>
+
+#endregion
+
 namespace Emik.Rhainterop;
 
 /// <summary>Allows a span into managed memory.</summary>
 sealed class SpanManager : MemoryManager<byte>
 {
     [NonNegativeValue]
-    readonly unsafe byte* _pointer;
+    readonly int _length;
 
     [NonNegativeValue]
-    readonly int _length;
+    readonly unsafe byte* _pointer;
 
     /// <summary>Initializes a new instance of the <see cref="SpanManager"/> class.</summary>
     /// <remarks><para>

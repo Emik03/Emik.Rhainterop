@@ -1,11 +1,14 @@
+#region Emik.MPL
+
 // <copyright file="AST.cs" company="Emik">
 // Copyright (c) Emik. This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 // </copyright>
+
+#endregion
+
 // ReSharper disable AssignNullToNotNullAttribute
 namespace Emik.Rhainterop;
-
-#pragma warning disable SA1300
-#pragma warning disable MA0055
+#pragma warning disable MA0055, SA1300
 /// <summary>Represents a key for a previously computed abstract syntax tree.</summary>
 /// <remarks><para>
 /// This type implements <see cref="IDisposable"/> to dispose the syntax tree when it is out of use.
@@ -26,95 +29,13 @@ public sealed class AST : ICloneable,
     /// <param name="id">The <see cref="Id"/> to store.</param>
     internal AST(ulong id) => Id = id;
 
-    /// <summary>Finalizes an instance of the <see cref="AST"/> class.</summary>
-    ~AST() => Dispose();
-
     /// <summary>Gets the key value used to get the <see cref="AST"/> that represents this in Rust.</summary>
     [CLSCompliant(false), Pure]
     public ulong Id { get; }
 
-    /// <summary>Implicitly calls <see cref="Id"/>.</summary>
-    /// <param name="ast">The <see cref="AST"/> to grab <see cref="Id"/>.</param>
-    /// <returns>The value <see cref="Id"/>, or 0 if <see langword="null"/>.</returns>
-    [CLSCompliant(false), Pure]
-    public static implicit operator ulong(AST? ast) => ast?.Id ?? 0;
-
-    /// <summary>Determines if two <see cref="AST"/> instances are equal.</summary>
-    /// <param name="x">The left-hand side.</param>
-    /// <param name="y">The right-hand side.</param>
-    /// <returns>They are both <see langword="null"/>, or share the same <see cref="Id"/>.</returns>
-    [Pure]
-    public static bool operator ==(AST? x, AST? y) => x is null ? y is null : y is not null && x.Id == y.Id;
-
-    /// <summary>Determines if two <see cref="AST"/> instances are unequal.</summary>
-    /// <param name="x">The left-hand side.</param>
-    /// <param name="y">The right-hand side.</param>
-    /// <returns>One of them is <see langword="null"/>, or have different values for <see cref="Id"/>.</returns>
-    [Pure]
-    public static bool operator !=(AST? x, AST? y) => !(x == y);
-
-    /// <summary>Determines if one <see cref="AST"/> is greater than another.</summary>
-    /// <param name="x">The left-hand side.</param>
-    /// <param name="y">The right-hand side.</param>
-    /// <returns>The parameter <paramref name="x"/> has a greater <see cref="Id"/> than <paramref name="y"/>.</returns>
-    [Pure]
-    public static bool operator >(AST? x, AST? y) => !(x == y);
-
-    /// <summary>Determines if one <see cref="AST"/> is greater or equal than another.</summary>
-    /// <param name="x">The left-hand side.</param>
-    /// <param name="y">The right-hand side.</param>
-    /// <returns>
-    /// The parameter <paramref name="x"/> has a greater or equal <see cref="Id"/> than <paramref name="y"/>.
-    /// </returns>
-    [Pure]
-    public static bool operator >=(AST? x, AST? y) => !(x == y);
-
-    /// <summary>Determines if one <see cref="AST"/> is less than another.</summary>
-    /// <param name="x">The left-hand side.</param>
-    /// <param name="y">The right-hand side.</param>
-    /// <returns>The parameter <paramref name="x"/> has a lesser <see cref="Id"/> than <paramref name="y"/>.</returns>
-    [Pure]
-    public static bool operator <(AST? x, AST? y) => !(x == y);
-
-    /// <summary>Determines if one <see cref="AST"/> is less or equal than another.</summary>
-    /// <param name="x">The left-hand side.</param>
-    /// <param name="y">The right-hand side.</param>
-    /// <returns>
-    /// The parameter <paramref name="x"/> has a lesser or equal <see cref="Id"/> than <paramref name="y"/>.
-    /// </returns>
-    [Pure]
-    public static bool operator <=(AST? x, AST? y) => !(x == y);
-
-    /// <inheritdoc />
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        Trace.WriteLineIf(Id is 0 || !drop(Id), "Failed to drop AST.");
-    }
-
     /// <inheritdoc />
     [Pure]
-    public override bool Equals(object? obj) => Equals(obj as AST);
-
-    /// <inheritdoc />
-    [Pure]
-    public new bool Equals(object? x, object? y) => Equals(x as AST, y as AST);
-
-    /// <inheritdoc />
-    [Pure]
-    public bool Equals(AST? other) => other is not null && Id == other.Id;
-
-    /// <inheritdoc />
-    [Pure]
-    public bool Equals(AST? x, AST? y) => x == y;
-
-    /// <inheritdoc />
-    [Pure]
-    public int Compare(object? x, object? y) => Compare(x as AST, y as AST);
-
-    /// <inheritdoc />
-    [Pure]
-    public int Compare(AST? x, AST? y) => x?.CompareTo(y) ?? int.MinValue;
+    public object Clone() => new AST(Id);
 
     /// <inheritdoc />
     [Pure]
@@ -126,45 +47,11 @@ public sealed class AST : ICloneable,
 
     /// <inheritdoc />
     [Pure]
-    public override int GetHashCode() => Id.GetHashCode();
+    public int Compare(object? x, object? y) => Compare(x as AST, y as AST);
 
     /// <inheritdoc />
     [Pure]
-    public int GetHashCode(object? obj) => GetHashCode(obj as AST);
-
-    /// <inheritdoc />
-    [Pure]
-    public int GetHashCode(AST? obj) => obj?.GetHashCode() ?? 0;
-
-    /// <inheritdoc />
-    [Pure]
-    public override string ToString() => $"{nameof(AST)} {nameof(Id)} = {Id}";
-
-    /// <inheritdoc />
-    [Pure]
-    public object Clone() => new AST(Id);
-
-    /// <summary><c>eval</c> Function.</summary>
-    /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
-    /// <typeparam name="T">
-    /// The type of the resulting type, <see cref="object"/> can be used much like <c>rhai::Dynamic</c> in Rust.
-    /// </typeparam>
-    /// <param name="length">The size of the internally allocated buffer.</param>
-    /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
-    [MustUseReturnValue]
-
-    // ReSharper disable once LambdaShouldNotCaptureContext
-    public Result<T, Exception> Eval<T>(int length = Span.Stackalloc) => Span.Allocate(length, Eval<T>);
-
-    /// <summary><c>eval</c> Function.</summary>
-    /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
-    /// <typeparam name="T">
-    /// The type of the resulting type, <see cref="object"/> can be used much like <c>rhai::Dynamic</c> in Rust.
-    /// </typeparam>
-    /// <param name="buffer">The buffer to mutate.</param>
-    /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
-    [MustUseReturnValue]
-    public Result<T, Exception> Eval<T>(Span<byte> buffer) => EvalInner<T>(buffer);
+    public int Compare(AST? x, AST? y) => x?.CompareTo(y) ?? int.MinValue;
 
     /// <inheritdoc />
     [Pure]
@@ -234,6 +121,122 @@ public sealed class AST : ICloneable,
     /// <inheritdoc />
     [Pure]
     TypeCode IConvertible.GetTypeCode() => Id.GetTypeCode();
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        Trace.WriteLineIf(Id is 0 || !drop(Id), "Failed to drop AST.");
+    }
+
+    /// <inheritdoc />
+    [Pure]
+    public new bool Equals(object? x, object? y) => Equals(x as AST, y as AST);
+
+    /// <inheritdoc />
+    [Pure]
+    public int GetHashCode(object? obj) => GetHashCode(obj as AST);
+
+    /// <inheritdoc />
+    [Pure]
+    public bool Equals(AST? x, AST? y) => x == y;
+
+    /// <inheritdoc />
+    [Pure]
+    public int GetHashCode(AST? obj) => obj?.GetHashCode() ?? 0;
+
+    /// <inheritdoc />
+    [Pure]
+    public bool Equals(AST? other) => other is not null && Id == other.Id;
+
+    /// <summary>Finalizes an instance of the <see cref="AST"/> class.</summary>
+    ~AST() => Dispose();
+
+    /// <summary>Implicitly calls <see cref="Id"/>.</summary>
+    /// <param name="ast">The <see cref="AST"/> to grab <see cref="Id"/>.</param>
+    /// <returns>The value <see cref="Id"/>, or 0 if <see langword="null"/>.</returns>
+    [CLSCompliant(false), Pure]
+    public static implicit operator ulong(AST? ast) => ast?.Id ?? 0;
+
+    /// <summary>Determines if two <see cref="AST"/> instances are equal.</summary>
+    /// <param name="x">The left-hand side.</param>
+    /// <param name="y">The right-hand side.</param>
+    /// <returns>They are both <see langword="null"/>, or share the same <see cref="Id"/>.</returns>
+    [Pure]
+    public static bool operator ==(AST? x, AST? y) => x is null ? y is null : y is not null && x.Id == y.Id;
+
+    /// <summary>Determines if two <see cref="AST"/> instances are unequal.</summary>
+    /// <param name="x">The left-hand side.</param>
+    /// <param name="y">The right-hand side.</param>
+    /// <returns>One of them is <see langword="null"/>, or have different values for <see cref="Id"/>.</returns>
+    [Pure]
+    public static bool operator !=(AST? x, AST? y) => !(x == y);
+
+    /// <summary>Determines if one <see cref="AST"/> is greater than another.</summary>
+    /// <param name="x">The left-hand side.</param>
+    /// <param name="y">The right-hand side.</param>
+    /// <returns>The parameter <paramref name="x"/> has a greater <see cref="Id"/> than <paramref name="y"/>.</returns>
+    [Pure]
+    public static bool operator >(AST? x, AST? y) => !(x == y);
+
+    /// <summary>Determines if one <see cref="AST"/> is greater or equal than another.</summary>
+    /// <param name="x">The left-hand side.</param>
+    /// <param name="y">The right-hand side.</param>
+    /// <returns>
+    /// The parameter <paramref name="x"/> has a greater or equal <see cref="Id"/> than <paramref name="y"/>.
+    /// </returns>
+    [Pure]
+    public static bool operator >=(AST? x, AST? y) => !(x == y);
+
+    /// <summary>Determines if one <see cref="AST"/> is less than another.</summary>
+    /// <param name="x">The left-hand side.</param>
+    /// <param name="y">The right-hand side.</param>
+    /// <returns>The parameter <paramref name="x"/> has a lesser <see cref="Id"/> than <paramref name="y"/>.</returns>
+    [Pure]
+    public static bool operator <(AST? x, AST? y) => !(x == y);
+
+    /// <summary>Determines if one <see cref="AST"/> is less or equal than another.</summary>
+    /// <param name="x">The left-hand side.</param>
+    /// <param name="y">The right-hand side.</param>
+    /// <returns>
+    /// The parameter <paramref name="x"/> has a lesser or equal <see cref="Id"/> than <paramref name="y"/>.
+    /// </returns>
+    [Pure]
+    public static bool operator <=(AST? x, AST? y) => !(x == y);
+
+    /// <inheritdoc />
+    [Pure]
+    public override bool Equals(object? obj) => Equals(obj as AST);
+
+    /// <inheritdoc />
+    [Pure]
+    public override int GetHashCode() => Id.GetHashCode();
+
+    /// <inheritdoc />
+    [Pure]
+    public override string ToString() => $"{nameof(AST)} {nameof(Id)} = {Id}";
+
+    /// <summary><c>eval</c> Function.</summary>
+    /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
+    /// <typeparam name="T">
+    /// The type of the resulting type, <see cref="object"/> can be used much like <c>rhai::Dynamic</c> in Rust.
+    /// </typeparam>
+    /// <param name="length">The size of the internally allocated buffer.</param>
+    /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
+    [MustUseReturnValue]
+
+    // ReSharper disable once LambdaShouldNotCaptureContext
+    public Result<T, Exception> Eval<T>(int length = Span.Stackalloc) => Span.Allocate(length, Eval<T>);
+
+    /// <summary><c>eval</c> Function.</summary>
+    /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
+    /// <typeparam name="T">
+    /// The type of the resulting type, <see cref="object"/> can be used much like <c>rhai::Dynamic</c> in Rust.
+    /// </typeparam>
+    /// <param name="buffer">The buffer to mutate.</param>
+    /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
+    [MustUseReturnValue]
+    public Result<T, Exception> Eval<T>(Span<byte> buffer) => EvalInner<T>(buffer);
 
     /// <summary>Calls the constructor.</summary>
     /// <param name="id">The <see cref="Id"/> to store.</param>

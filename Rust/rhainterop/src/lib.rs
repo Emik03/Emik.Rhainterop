@@ -1,15 +1,17 @@
-mod engines;
-mod pointers;
+use std::collections::HashMap;
+use std::num::Wrapping;
+use std::sync::Mutex;
 
-use crate::engines::{ast, engine, with};
-use crate::pointers::Raw;
 use rhai::plugin::RhaiResult;
 use rhai::{Engine, AST};
 use rmp_serde::Serializer;
 use serde::Serialize;
-use std::collections::HashMap;
-use std::num::Wrapping;
-use std::sync::Mutex;
+
+use crate::engines::{ast, engine, with};
+use crate::pointers::Raw;
+
+mod engines;
+mod pointers;
 
 pub type ASTResult<E> = Result<AST, E>;
 pub type Id = Wrapping<u64>;
