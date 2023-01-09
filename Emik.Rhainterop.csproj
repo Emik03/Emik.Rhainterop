@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
+        <RepositoryUrl>https://github.com/Emik03/Emik.Rhainterop</RepositoryUrl>
         <Description>Bridge between Rhai and C#. Allows you to invoke and receive values from scripts.</Description>
     </PropertyGroup>
     <ItemGroup>
