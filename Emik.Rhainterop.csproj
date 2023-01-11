@@ -7,6 +7,6 @@
     <ItemGroup>
         <PackageReference Include="MessagePack" Version="2.4.35" PrivateAssets="all" />
         <PackageReference Include="MessagePackAnalyzer" Version="2.4.35" PrivateAssets="all" />
-        <ProjectReference Include="..\Emik.Results\Emik.Results.csproj" />
+        <PackageReference Include="Emik.Results" Version="1.0.0" PrivateAssets="all" ExcludeAssets="contentfiles" />
     </ItemGroup>
 </Project>
