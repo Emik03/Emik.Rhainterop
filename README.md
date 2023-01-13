@@ -1,6 +1,7 @@
 # Emik.Rhainterop
 
 [![NuGet package](https://img.shields.io/nuget/v/Emik.Rhainterop.svg?logo=NuGet)](https://www.nuget.org/packages/Emik.Rhainterop)
+[![License](https://img.shields.io/github/license/Emik03/Emik.Rhainterop.svg?style=flat)](https://github.com/Emik03/Emik.Rhainterop/blob/main/LICENSE)
 
 Adds the Rhai scripting language by adding types that handle FFI communication to a compiled Rust binary.
 
