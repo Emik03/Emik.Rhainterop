@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MPL-2.0
 use std::ffi::{c_char, CStr};
 use std::slice::from_raw_parts_mut;
 
