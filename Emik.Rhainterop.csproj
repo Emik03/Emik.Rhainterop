@@ -6,7 +6,7 @@
         <Description>Bridge between Rhai and C#. Allows you to invoke and receive values from scripts.</Description>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Emik.Results" Version="1.0.2" PrivateAssets="all" />
+        <PackageReference Include="Emik.Results" Version="1.0.4" PrivateAssets="all" />
         <PackageReference Include="MessagePack" Version="2.4.59" PrivateAssets="all" />
         <PackageReference Include="MessagePackAnalyzer" Version="2.4.59" PrivateAssets="all" />
     </ItemGroup>
