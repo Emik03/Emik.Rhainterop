@@ -230,7 +230,7 @@ public sealed class AST : ICloneable,
     /// <param name="buffer">The buffer to mutate.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public Result<T, Exception> Eval<T>(Span<byte> buffer) => EvalInner<T>(buffer);
+    public Result<T, Exception> Eval<T>(in Span<byte> buffer) => EvalInner<T>(buffer);
 
     /// <summary>Calls the constructor.</summary>
     /// <param name="id">The <see cref="Id"/> to store.</param>

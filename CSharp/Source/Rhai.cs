@@ -21,7 +21,7 @@ public static class Rhai
     /// <param name="script">The script to execute.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [Pure]
-    public static Result<AST, Exception> Compile(Span<byte> buffer, string? script) => script.CompileInner(buffer);
+    public static Result<AST, Exception> Compile(in Span<byte> buffer, string? script) => script.CompileInner(buffer);
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -41,7 +41,7 @@ public static class Rhai
     /// <param name="path">The path containing the script to execute.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<AST, Exception> CompileFile(Span<byte> buffer, [PathReference, UriString] string? path) =>
+    public static Result<AST, Exception> CompileFile(in Span<byte> buffer, [PathReference, UriString] string? path) =>
         path.CompileInner(buffer, true);
 
     /// <summary><c>eval</c> Function.</summary>
@@ -65,7 +65,7 @@ public static class Rhai
     /// <param name="script">The script to execute.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<T, Exception> Eval<T>(Span<byte> buffer, string? script) => script.EvalInner<T>(buffer);
+    public static Result<T, Exception> Eval<T>(in Span<byte> buffer, string? script) => script.EvalInner<T>(buffer);
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -91,7 +91,7 @@ public static class Rhai
     /// <param name="path">The path containing the script to execute.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<T, Exception> EvalFile<T>(Span<byte> buffer, [PathReference, UriString] string? path) =>
+    public static Result<T, Exception> EvalFile<T>(in Span<byte> buffer, [PathReference, UriString] string? path) =>
         path.EvalInner<T>(buffer, true);
 
     /// <summary>Determines if a <see cref="string"/> is <see langword="null"/>.</summary>
