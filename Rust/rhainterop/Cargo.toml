@@ -8,17 +8,19 @@ authors = ["emik"]
 
 [dependencies]
 decimal = "2.1.0"
-rhai = { version = "1.10.1", features = ["bin-features", "core-error", "debugging", "decimal", "hashbrown", "internals", "libm", "metadata", "rustyline", "serde", "serde_json"] }
-rhai_codegen = { version = "1.4.2", features = ["metadata"] }
-#rhai-doc = "0.2.3"
-rhai-dylib = "0.1.0"
-rhai-fs = { version = "0.0.1", features = ["metadata"] }
+rhai = { version = "1.12.0", features = ["bin-features", "core-error", "debugging", "decimal", "hashbrown", "internals", "libm", "metadata", "rustyline", "serde", "serde_json"] }
+rhai-autodocs = "0.1.0"
+rhai_codegen = { version = "1.5.0", features = ["metadata"] }
+rhai-doc = "0.2.4"
+rhai-dylib = "0.1.4"
+rhai-fs = { version = "0.1.2", features = ["metadata"] }
+rhai-url = "0.0.1"
 #rhai-memflow = "0.1.2"
 rhai-rand = { version = "0.1.4", features = ["array", "float", "decimal", "metadata", "rust_decimal"] }
 rhai-sci = { version = "0.1.7", features = ["csv-sniffer", "io", "metadata", "minreq", "polars", "temp-file", "url"] }
 rmp = "0.8.11"
 rmp-serde = "1.1.1"
-serde = { version = "1.0.145", features = ["derive"] }
+serde = { version = "1.0.152", features = ["derive"] }
 
 [lib]
 crate-type = ["cdylib"]

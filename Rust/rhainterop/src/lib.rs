@@ -3,8 +3,8 @@ use std::collections::HashMap;
 use std::num::Wrapping;
 use std::sync::Mutex;
 
+use rhai::{AST, Engine};
 use rhai::plugin::RhaiResult;
-use rhai::{Engine, AST};
 use rmp_serde::Serializer;
 use serde::Serialize;
 
@@ -57,9 +57,9 @@ pub extern "C" fn eval_file(raw: Raw) -> bool {
 }
 
 fn run<S, T, P>(src: S, buf: &'static mut [u8], fun: T) -> bool
-where
-    T: FnOnce(&Engine, P) -> RhaiResult,
-    S: Into<P>,
+    where
+        T: FnOnce(&Engine, P) -> RhaiResult,
+        S: Into<P>,
 {
     engine(|e| {
         let src = src.into();
@@ -69,9 +69,9 @@ where
 }
 
 fn write<E, T>(buf: &'static mut [u8], res: Result<T, E>) -> bool
-where
-    E: ToString,
-    T: Serialize,
+    where
+        E: ToString,
+        T: Serialize,
 {
     let serializer = &mut Serializer::new(buf);
     let ok = res.is_ok();
@@ -85,10 +85,10 @@ where
 }
 
 fn save<E, F, P>(src: &'static str, buf: &'static mut [u8], fun: F) -> u64
-where
-    E: ToString,
-    F: FnOnce(&Engine, P) -> ASTResult<E>,
-    P: From<&'static str>,
+    where
+        E: ToString,
+        F: FnOnce(&Engine, P) -> ASTResult<E>,
+        P: From<&'static str>,
 {
     with(|a, e, i| {
         let src = src.into();
