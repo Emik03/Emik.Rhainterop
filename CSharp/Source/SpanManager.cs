@@ -28,13 +28,10 @@ sealed class SpanManager : MemoryManager<byte>
 
     /// <inheritdoc />
     [Pure]
-    public override unsafe MemoryHandle Pin(int elementIndex = 0)
-    {
-        if (elementIndex < 0 || elementIndex >= _length)
-            throw new ArgumentOutOfRangeException(nameof(elementIndex));
-
-        return new(_pointer + elementIndex);
-    }
+    public override unsafe MemoryHandle Pin(int elementIndex = 0) =>
+        (uint)elementIndex < _length
+            ? new(_pointer + elementIndex)
+            : throw new ArgumentOutOfRangeException(nameof(elementIndex));
 
     /// <inheritdoc />
     [Pure]
