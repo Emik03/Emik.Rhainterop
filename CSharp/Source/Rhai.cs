@@ -21,7 +21,7 @@ public static class Rhai
     /// <param name="script">The script to execute.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [Pure]
-    public static Result<AST, Exception> Compile(in Span<byte> buffer, string? script) => script.CompileInner(buffer);
+    public static Result<AST, Exception> Compile(Span<byte> buffer, string? script) => script.CompileInner(buffer);
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -41,7 +41,7 @@ public static class Rhai
     /// <param name="path">The path containing the script to execute.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<AST, Exception> CompileFile(in Span<byte> buffer, [PathReference, UriString] string? path) =>
+    public static Result<AST, Exception> CompileFile(Span<byte> buffer, [PathReference, UriString] string? path) =>
         path.CompileInner(buffer, true);
 
     /// <summary><c>eval</c> Function.</summary>
@@ -65,7 +65,7 @@ public static class Rhai
     /// <param name="script">The script to execute.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<T, Exception> Eval<T>(in Span<byte> buffer, string? script) => script.EvalInner<T>(buffer);
+    public static Result<T, Exception> Eval<T>(Span<byte> buffer, string? script) => script.EvalInner<T>(buffer);
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -91,7 +91,7 @@ public static class Rhai
     /// <param name="path">The path containing the script to execute.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<T, Exception> EvalFile<T>(in Span<byte> buffer, [PathReference, UriString] string? path) =>
+    public static Result<T, Exception> EvalFile<T>(Span<byte> buffer, [PathReference, UriString] string? path) =>
         path.EvalInner<T>(buffer, true);
 
     /// <summary>Determines if a <see cref="string"/> is <see langword="null"/>.</summary>
@@ -103,7 +103,7 @@ public static class Rhai
     /// otherwise <see langword="false"/>.
     /// </returns>
     [MustUseReturnValue]
-    internal static bool IsNull(this string? script, in Span<byte> buffer, out int length)
+    internal static bool IsNull(this string? script, Span<byte> buffer, out int length)
     {
         length = 0;
 
@@ -121,7 +121,7 @@ public static class Rhai
     /// <param name="buffer">The buffer to write to.</param>
     /// <returns>A success <typeparamref name="T"/> if it can be deserialized, or an <see cref="Exception"/>.</returns>
     [MustUseReturnValue]
-    internal static Result<T, Exception> Deserialize<T>(this in Result<bool, Exception> result, in Span<byte> buffer)
+    internal static Result<T, Exception> Deserialize<T>(this Result<bool, Exception> result, Span<byte> buffer)
     {
         static TInner Get<TInner>(Memory<byte> x) => MessagePackSerializer.Deserialize<TInner>(x);
 
@@ -143,7 +143,7 @@ public static class Rhai
     }
 
     [MustUseReturnValue]
-    static unsafe Result<AST, Exception> CompileInner(this string? script, in Span<byte> buffer, in bool isFile = false)
+    static unsafe Result<AST, Exception> CompileInner(this string? script, Span<byte> buffer, bool isFile = false)
     {
         if (script.IsNull(buffer, out var length))
             return RhaiException.Null;
@@ -153,7 +153,7 @@ public static class Rhai
     }
 
     [MustUseReturnValue]
-    static unsafe Result<T, Exception> EvalInner<T>(this string? script, in Span<byte> buffer, in bool isFile = false)
+    static unsafe Result<T, Exception> EvalInner<T>(this string? script, Span<byte> buffer, bool isFile = false)
     {
         if (script.IsNull(buffer, out var length))
             return RhaiException.Null;

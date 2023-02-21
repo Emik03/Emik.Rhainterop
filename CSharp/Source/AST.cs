@@ -171,7 +171,7 @@ public sealed class AST : ICloneable,
     /// <param name="y">The right-hand side.</param>
     /// <returns>The parameter <paramref name="x"/> has a greater <see cref="Id"/> than <paramref name="y"/>.</returns>
     [Pure]
-    public static bool operator >(AST? x, AST? y) => !(x == y);
+    public static bool operator >(AST? x, AST? y) => x is null ? y is null : y is not null && x.Id > y.Id;
 
     /// <summary>Determines if one <see cref="AST"/> is greater or equal than another.</summary>
     /// <param name="x">The left-hand side.</param>
@@ -180,14 +180,14 @@ public sealed class AST : ICloneable,
     /// The parameter <paramref name="x"/> has a greater or equal <see cref="Id"/> than <paramref name="y"/>.
     /// </returns>
     [Pure]
-    public static bool operator >=(AST? x, AST? y) => !(x == y);
+    public static bool operator >=(AST? x, AST? y) => x == y || x > y;
 
     /// <summary>Determines if one <see cref="AST"/> is less than another.</summary>
     /// <param name="x">The left-hand side.</param>
     /// <param name="y">The right-hand side.</param>
     /// <returns>The parameter <paramref name="x"/> has a lesser <see cref="Id"/> than <paramref name="y"/>.</returns>
     [Pure]
-    public static bool operator <(AST? x, AST? y) => !(x == y);
+    public static bool operator <(AST? x, AST? y) => y > x;
 
     /// <summary>Determines if one <see cref="AST"/> is less or equal than another.</summary>
     /// <param name="x">The left-hand side.</param>
@@ -196,7 +196,7 @@ public sealed class AST : ICloneable,
     /// The parameter <paramref name="x"/> has a lesser or equal <see cref="Id"/> than <paramref name="y"/>.
     /// </returns>
     [Pure]
-    public static bool operator <=(AST? x, AST? y) => !(x == y);
+    public static bool operator <=(AST? x, AST? y) => x == y || x < y;
 
     /// <inheritdoc />
     [Pure]
@@ -230,7 +230,7 @@ public sealed class AST : ICloneable,
     /// <param name="buffer">The buffer to mutate.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public Result<T, Exception> Eval<T>(in Span<byte> buffer) => EvalInner<T>(buffer);
+    public Result<T, Exception> Eval<T>(Span<byte> buffer) => EvalInner<T>(buffer);
 
     /// <summary>Calls the constructor.</summary>
     /// <param name="id">The <see cref="Id"/> to store.</param>
@@ -242,7 +242,7 @@ public sealed class AST : ICloneable,
     static extern bool drop(ulong id);
 
     [MustUseReturnValue]
-    unsafe Result<T, Exception> EvalInner<T>(in Span<byte> buffer)
+    unsafe Result<T, Exception> EvalInner<T>(Span<byte> buffer)
     {
         var length = buffer.Length;
 

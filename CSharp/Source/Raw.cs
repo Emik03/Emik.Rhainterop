@@ -24,7 +24,7 @@ readonly struct Raw
     /// <param name="source">The source to store. Can be null.</param>
     /// <param name="pointer">The pointer to the mutable buffer. Can be null.</param>
     /// <param name="length">The length to the mutable buffer.</param>
-    internal unsafe Raw(in string? source, in byte* pointer, [NonNegativeValue] in int length)
+    internal unsafe Raw(string? source, byte* pointer, [NonNegativeValue] int length)
     {
         _source = source;
         _pointer = (nuint)pointer;
@@ -34,7 +34,7 @@ readonly struct Raw
     /// <summary>Initializes a new instance of the <see cref="Raw"/> struct. Assumes the pointer is pinned.</summary>
     /// <param name="pointer">The pointer to the mutable buffer. Can be null.</param>
     /// <param name="length">The length to the mutable buffer.</param>
-    internal unsafe Raw(in byte* pointer, [NonNegativeValue] in int length)
+    internal unsafe Raw(byte* pointer, [NonNegativeValue] int length)
         : this(null, pointer, length) { }
 
     /// <summary>Sends this instance to Rust.</summary>
@@ -45,7 +45,7 @@ readonly struct Raw
     /// Theoretically, this shouldn't ever happen, but this cannot be verifiable.
     /// </returns>
     [MustUseReturnValue]
-    internal Result<bool, Exception> Eval(in bool isFile) => Try<Raw, bool>(isFile ? eval_file : eval, this);
+    internal Result<bool, Exception> Eval(bool isFile) => Try<Raw, bool>(isFile ? eval_file : eval, this);
 
     /// <summary>Sends this instance to Rust.</summary>
     /// <param name="ast">The abstract syntax tree to use as a key value.</param>
@@ -55,7 +55,7 @@ readonly struct Raw
     /// Theoretically, this shouldn't ever happen, but this cannot be verifiable.
     /// </returns>
     [MustUseReturnValue]
-    internal Result<bool, Exception> Eval(in AST ast) => Try(eval_ast, this, ast.Id);
+    internal Result<bool, Exception> Eval(AST ast) => Try(eval_ast, this, ast.Id);
 
     /// <summary>Sends this instance to Rust.</summary>
     /// <param name="isFile">Whether <see cref="_source"/> is source code, or a <see cref="Uri"/> to one.</param>
@@ -65,7 +65,7 @@ readonly struct Raw
     /// Theoretically, this shouldn't ever happen, but this cannot be verifiable.
     /// </returns>
     [MustUseReturnValue]
-    internal Result<AST, Exception> Compile(in bool isFile) =>
+    internal Result<AST, Exception> Compile(bool isFile) =>
         Try<Raw, ulong>(isFile ? compile_file : compile, this).Map(AST.New);
 
     [DllImport(Lib), Pure]
