@@ -9,6 +9,7 @@ use rhai::OptimizationLevel;
 use rhai_fs::FilesystemPackage;
 use rhai_rand::RandomPackage;
 use rhai_sci::SciPackage;
+use rhai_url::UrlPackage;
 
 use crate::{Id, IdMutex, Map, MapMutex};
 
@@ -20,9 +21,12 @@ thread_local! {
     static ENGINE: Engine = {
         let mut engine = Engine::new();
 
+        
         RandomPackage::new().register_into_engine(&mut engine);
         SciPackage::new().register_into_engine(&mut engine);
         FilesystemPackage::new().register_into_engine(&mut engine);
+        UrlPackage::new().register_into_engine(&mut engine);
+
 
         engine.set_optimization_level(OptimizationLevel::Full);
 
