@@ -3,9 +3,9 @@ use std::collections::HashMap;
 use std::num::Wrapping;
 use std::ops::DerefMut;
 
-use rhai::packages::Package;
 use rhai::Engine;
 use rhai::OptimizationLevel;
+use rhai::packages::Package;
 use rhai_fs::FilesystemPackage;
 use rhai_rand::RandomPackage;
 use rhai_sci::SciPackage;
@@ -21,12 +21,10 @@ thread_local! {
     static ENGINE: Engine = {
         let mut engine = Engine::new();
 
-        
-        RandomPackage::new().register_into_engine(&mut engine);
         SciPackage::new().register_into_engine(&mut engine);
-        FilesystemPackage::new().register_into_engine(&mut engine);
         UrlPackage::new().register_into_engine(&mut engine);
-
+        RandomPackage::new().register_into_engine(&mut engine);
+        FilesystemPackage::new().register_into_engine(&mut engine);
 
         engine.set_optimization_level(OptimizationLevel::Full);
 
@@ -35,8 +33,8 @@ thread_local! {
 }
 
 pub fn ast<F, T>(fun: F) -> T
-where
-    F: FnOnce(&mut Map) -> T,
+    where
+        F: FnOnce(&mut Map) -> T,
 {
     ASTS.with(|a| {
         let mut a = a.lock().unwrap();
@@ -47,15 +45,15 @@ where
 }
 
 pub fn engine<F, T>(fun: F) -> T
-where
-    F: FnOnce(&Engine) -> T,
+    where
+        F: FnOnce(&Engine) -> T,
 {
     ENGINE.with(fun)
 }
 
 pub fn id<F, T>(fun: F) -> T
-where
-    F: FnOnce(&mut Id) -> T,
+    where
+        F: FnOnce(&mut Id) -> T,
 {
     ID.with(|i| {
         let mut i = i.lock().unwrap();
@@ -66,8 +64,8 @@ where
 }
 
 pub fn with<F, T>(fun: F) -> T
-where
-    F: FnOnce(&mut Map, &Engine, &mut Id) -> T,
+    where
+        F: FnOnce(&mut Map, &Engine, &mut Id) -> T,
 {
     ast(|a| engine(|e| id(|i| fun(a, e, i))))
 }
