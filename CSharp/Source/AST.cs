@@ -2,18 +2,21 @@
 
 // ReSharper disable AssignNullToNotNullAttribute
 namespace Emik.Rhainterop;
-#pragma warning disable MA0055, SA1300
+#pragma warning disable CA5392, MA0055, SA1300, SYSLIB1054
 /// <summary>Represents a key for a previously computed abstract syntax tree.</summary>
 /// <remarks><para>
 /// This type implements <see cref="IDisposable"/> to dispose the syntax tree when it is out of use.
 /// If this type isn't disposed, the abstract syntax tree will remain in memory for the rest of the session.
 /// </para></remarks>
 public sealed class AST : ICloneable,
-    IConvertible,
-    IComparer,
-    IComparer<AST>,
     IComparable,
     IComparable<AST>,
+    IComparer,
+    IComparer<AST>,
+#if NET7_0_OR_GREATER
+    IComparisonOperators<AST, AST, bool>,
+#endif
+    IConvertible,
     IDisposable,
     IEquatable<AST>,
     IEqualityComparer,
@@ -46,6 +49,52 @@ public sealed class AST : ICloneable,
     /// <inheritdoc />
     [Pure]
     public int Compare(AST? x, AST? y) => x?.CompareTo(y) ?? int.MinValue;
+
+    /// <summary>Determines if two <see cref="AST"/> instances are equal.</summary>
+    /// <param name="x">The left-hand side.</param>
+    /// <param name="y">The right-hand side.</param>
+    /// <returns>They are both <see langword="null"/>, or share the same <see cref="Id"/>.</returns>
+    [Pure]
+    public static bool operator ==(AST? x, AST? y) => x is null ? y is null : y is not null && x.Id == y.Id;
+
+    /// <summary>Determines if two <see cref="AST"/> instances are unequal.</summary>
+    /// <param name="x">The left-hand side.</param>
+    /// <param name="y">The right-hand side.</param>
+    /// <returns>One of them is <see langword="null"/>, or have different values for <see cref="Id"/>.</returns>
+    [Pure]
+    public static bool operator !=(AST? x, AST? y) => !(x == y);
+
+    /// <summary>Determines if one <see cref="AST"/> is greater than another.</summary>
+    /// <param name="x">The left-hand side.</param>
+    /// <param name="y">The right-hand side.</param>
+    /// <returns>The parameter <paramref name="x"/> has a greater <see cref="Id"/> than <paramref name="y"/>.</returns>
+    [Pure]
+    public static bool operator >(AST? x, AST? y) => x is null ? y is null : y is not null && x.Id > y.Id;
+
+    /// <summary>Determines if one <see cref="AST"/> is greater or equal than another.</summary>
+    /// <param name="x">The left-hand side.</param>
+    /// <param name="y">The right-hand side.</param>
+    /// <returns>
+    /// The parameter <paramref name="x"/> has a greater or equal <see cref="Id"/> than <paramref name="y"/>.
+    /// </returns>
+    [Pure]
+    public static bool operator >=(AST? x, AST? y) => x == y || x > y;
+
+    /// <summary>Determines if one <see cref="AST"/> is less than another.</summary>
+    /// <param name="x">The left-hand side.</param>
+    /// <param name="y">The right-hand side.</param>
+    /// <returns>The parameter <paramref name="x"/> has a lesser <see cref="Id"/> than <paramref name="y"/>.</returns>
+    [Pure]
+    public static bool operator <(AST? x, AST? y) => y > x;
+
+    /// <summary>Determines if one <see cref="AST"/> is less or equal than another.</summary>
+    /// <param name="x">The left-hand side.</param>
+    /// <param name="y">The right-hand side.</param>
+    /// <returns>
+    /// The parameter <paramref name="x"/> has a lesser or equal <see cref="Id"/> than <paramref name="y"/>.
+    /// </returns>
+    [Pure]
+    public static bool operator <=(AST? x, AST? y) => x == y || x < y;
 
     /// <inheritdoc />
     [Pure]
@@ -151,52 +200,6 @@ public sealed class AST : ICloneable,
     /// <returns>The value <see cref="Id"/>, or 0 if <see langword="null"/>.</returns>
     [CLSCompliant(false), Pure]
     public static implicit operator ulong(AST? ast) => ast?.Id ?? 0;
-
-    /// <summary>Determines if two <see cref="AST"/> instances are equal.</summary>
-    /// <param name="x">The left-hand side.</param>
-    /// <param name="y">The right-hand side.</param>
-    /// <returns>They are both <see langword="null"/>, or share the same <see cref="Id"/>.</returns>
-    [Pure]
-    public static bool operator ==(AST? x, AST? y) => x is null ? y is null : y is not null && x.Id == y.Id;
-
-    /// <summary>Determines if two <see cref="AST"/> instances are unequal.</summary>
-    /// <param name="x">The left-hand side.</param>
-    /// <param name="y">The right-hand side.</param>
-    /// <returns>One of them is <see langword="null"/>, or have different values for <see cref="Id"/>.</returns>
-    [Pure]
-    public static bool operator !=(AST? x, AST? y) => !(x == y);
-
-    /// <summary>Determines if one <see cref="AST"/> is greater than another.</summary>
-    /// <param name="x">The left-hand side.</param>
-    /// <param name="y">The right-hand side.</param>
-    /// <returns>The parameter <paramref name="x"/> has a greater <see cref="Id"/> than <paramref name="y"/>.</returns>
-    [Pure]
-    public static bool operator >(AST? x, AST? y) => x is null ? y is null : y is not null && x.Id > y.Id;
-
-    /// <summary>Determines if one <see cref="AST"/> is greater or equal than another.</summary>
-    /// <param name="x">The left-hand side.</param>
-    /// <param name="y">The right-hand side.</param>
-    /// <returns>
-    /// The parameter <paramref name="x"/> has a greater or equal <see cref="Id"/> than <paramref name="y"/>.
-    /// </returns>
-    [Pure]
-    public static bool operator >=(AST? x, AST? y) => x == y || x > y;
-
-    /// <summary>Determines if one <see cref="AST"/> is less than another.</summary>
-    /// <param name="x">The left-hand side.</param>
-    /// <param name="y">The right-hand side.</param>
-    /// <returns>The parameter <paramref name="x"/> has a lesser <see cref="Id"/> than <paramref name="y"/>.</returns>
-    [Pure]
-    public static bool operator <(AST? x, AST? y) => y > x;
-
-    /// <summary>Determines if one <see cref="AST"/> is less or equal than another.</summary>
-    /// <param name="x">The left-hand side.</param>
-    /// <param name="y">The right-hand side.</param>
-    /// <returns>
-    /// The parameter <paramref name="x"/> has a lesser or equal <see cref="Id"/> than <paramref name="y"/>.
-    /// </returns>
-    [Pure]
-    public static bool operator <=(AST? x, AST? y) => x == y || x < y;
 
     /// <inheritdoc />
     [Pure]

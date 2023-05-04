@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MPL-2.0
 namespace Emik.Rhainterop;
 
-#pragma warning disable SA1300
+#pragma warning disable CA5392, SA1300, SYSLIB1054
 /// <summary>Stores two buffers to transmit via FFI. Internal use only, and very <see langword="unsafe"/>.</summary>
 [StructLayout(LayoutKind.Sequential)]
 readonly struct Raw
