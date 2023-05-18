@@ -5,7 +5,8 @@
 `eval` Function.
 
 ```csharp
-public static Result<T,System.Exception> EvalFile<T>(System.Span<byte> buffer, string? path);
+public static Emik.Results.Result<T,Emik.Rhainterop.RhaiException> EvalFile<T>(System.Span<byte> buffer, string? path)
+    where T : notnull;
 ```
 #### Type parameters
 
@@ -29,7 +30,7 @@ The buffer to mutate.
 The path containing the script to execute.
 
 #### Returns
-[Emik.Results.Result](https://docs.microsoft.com/en-us/dotnet/api/Emik.Results.Result 'Emik.Results.Result')  
+[Emik.Results.Result&lt;](https://docs.microsoft.com/en-us/dotnet/api/Emik.Results.Result-2 'Emik.Results.Result`2')[T](Rhai.EvalFile{T}(Span{Byte},string).md#Emik.Rhainterop.Rhai.EvalFile_T_(System.Span_byte_,string).T 'Emik.Rhainterop.Rhai.EvalFile<T>(System.Span<byte>, string).T')[,](https://docs.microsoft.com/en-us/dotnet/api/Emik.Results.Result-2 'Emik.Results.Result`2')[RhaiException](RhaiException.md 'Emik.Rhainterop.RhaiException')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/Emik.Results.Result-2 'Emik.Results.Result`2')  
 The resulting type from the expression given, or a runtime error from Rhai.
 
 ### Remarks

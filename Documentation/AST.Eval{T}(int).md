@@ -5,7 +5,8 @@
 `eval` Function.
 
 ```csharp
-public Result<T,System.Exception> Eval<T>(int length=1024);
+public Emik.Results.Result<T,Emik.Rhainterop.RhaiException> Eval<T>(int length=1024)
+    where T : notnull;
 ```
 #### Type parameters
 
@@ -23,7 +24,7 @@ The type of the resulting type, [System.Object](https://docs.microsoft.com/en-us
 The size of the internally allocated buffer.
 
 #### Returns
-[Emik.Results.Result](https://docs.microsoft.com/en-us/dotnet/api/Emik.Results.Result 'Emik.Results.Result')  
+[Emik.Results.Result&lt;](https://docs.microsoft.com/en-us/dotnet/api/Emik.Results.Result-2 'Emik.Results.Result`2')[T](AST.Eval{T}(int).md#Emik.Rhainterop.AST.Eval_T_(int).T 'Emik.Rhainterop.AST.Eval<T>(int).T')[,](https://docs.microsoft.com/en-us/dotnet/api/Emik.Results.Result-2 'Emik.Results.Result`2')[RhaiException](RhaiException.md 'Emik.Rhainterop.RhaiException')[&gt;](https://docs.microsoft.com/en-us/dotnet/api/Emik.Results.Result-2 'Emik.Results.Result`2')  
 The resulting type from the expression given, or a runtime error from Rhai.
 
 ### Remarks

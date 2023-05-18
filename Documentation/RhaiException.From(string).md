@@ -17,4 +17,4 @@ The message to pass.
 
 #### Returns
 [RhaiException](RhaiException.md 'Emik.Rhainterop.RhaiException')  
-A new [RhaiException](RhaiException.md 'Emik.Rhainterop.RhaiException').
+The new [RhaiException](RhaiException.md 'Emik.Rhainterop.RhaiException') instance containing the parameter [message](RhaiException.From(string).md#Emik.Rhainterop.RhaiException.From(string).message 'Emik.Rhainterop.RhaiException.From(string).message').
