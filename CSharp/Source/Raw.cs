@@ -45,7 +45,9 @@ readonly struct Raw
     /// Theoretically, this shouldn't ever happen, but this cannot be verifiable.
     /// </returns>
     [MustUseReturnValue]
-    internal Result<bool, Exception> Eval(bool isFile) => Try<Raw, bool>(isFile ? eval_file : eval, this);
+    internal Result<bool, RhaiException> Eval(bool isFile) =>
+        Try<Raw, bool>(isFile ? eval_file : eval, this)
+           .MapErr(RhaiException.From);
 
     /// <summary>Sends this instance to Rust.</summary>
     /// <param name="ast">The abstract syntax tree to use as a key value.</param>
@@ -55,7 +57,7 @@ readonly struct Raw
     /// Theoretically, this shouldn't ever happen, but this cannot be verifiable.
     /// </returns>
     [MustUseReturnValue]
-    internal Result<bool, Exception> Eval(AST ast) => Try(eval_ast, this, ast.Id);
+    internal Result<bool, RhaiException> Eval(AST ast) => Try(eval_ast, this, ast.Id).MapErr(RhaiException.From);
 
     /// <summary>Sends this instance to Rust.</summary>
     /// <param name="isFile">Whether <see cref="_source"/> is source code, or a <see cref="Uri"/> to one.</param>
@@ -65,8 +67,8 @@ readonly struct Raw
     /// Theoretically, this shouldn't ever happen, but this cannot be verifiable.
     /// </returns>
     [MustUseReturnValue]
-    internal Result<AST, Exception> Compile(bool isFile) =>
-        Try<Raw, ulong>(isFile ? compile_file : compile, this).Map(AST.New);
+    internal Result<AST, RhaiException> Compile(bool isFile) =>
+        Try<Raw, ulong>(isFile ? compile_file : compile, this).Map(AST.New).MapErr(RhaiException.From);
 
     [DllImport(Lib), Pure]
     static extern ulong compile(Raw raw);

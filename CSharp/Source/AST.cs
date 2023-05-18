@@ -223,7 +223,9 @@ public sealed class AST : ICloneable,
     [MustUseReturnValue]
 
     // ReSharper disable once LambdaShouldNotCaptureContext
-    public Result<T, Exception> Eval<T>(int length = Span.Stackalloc) => Span.Allocate(length, Eval<T>);
+    public Result<T, RhaiException> Eval<T>(int length = Span.Stackalloc)
+        where T : notnull => // ReSharper disable once LambdaShouldNotCaptureContext
+        Span.Allocate(length, Eval<T>);
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -233,7 +235,9 @@ public sealed class AST : ICloneable,
     /// <param name="buffer">The buffer to mutate.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public Result<T, Exception> Eval<T>(Span<byte> buffer) => EvalInner<T>(buffer);
+    public Result<T, RhaiException> Eval<T>(Span<byte> buffer)
+        where T : notnull =>
+        EvalInner<T>(buffer);
 
     /// <summary>Calls the constructor.</summary>
     /// <param name="id">The <see cref="Id"/> to store.</param>
@@ -245,7 +249,8 @@ public sealed class AST : ICloneable,
     static extern bool drop(ulong id);
 
     [MustUseReturnValue]
-    unsafe Result<T, Exception> EvalInner<T>(Span<byte> buffer)
+    unsafe Result<T, RhaiException> EvalInner<T>(Span<byte> buffer)
+        where T : notnull
     {
         var length = buffer.Length;
 

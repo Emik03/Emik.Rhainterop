@@ -12,8 +12,8 @@ public static class Rhai
     /// <param name="length">The size of the internally allocated buffer.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [Pure]
-    public static Result<AST, Exception> Compile(string? script, [NonNegativeValue] int length = Span.Stackalloc) =>
-        script is null ? RhaiException.Null : Span.Allocate(length, script, Compile);
+    public static Result<AST, RhaiException> Compile(string? script, [NonNegativeValue] int length = Span.Stackalloc) =>
+        script is null ? RhaiException.Parameter : Span.Allocate(length, script, Compile);
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -21,7 +21,7 @@ public static class Rhai
     /// <param name="script">The script to execute.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [Pure]
-    public static Result<AST, Exception> Compile(Span<byte> buffer, string? script) => script.CompileInner(buffer);
+    public static Result<AST, RhaiException> Compile(Span<byte> buffer, string? script) => script.CompileInner(buffer);
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -29,11 +29,11 @@ public static class Rhai
     /// <param name="length">The size of the internally allocated buffer.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<AST, Exception> CompileFile(
+    public static Result<AST, RhaiException> CompileFile(
         [PathReference, UriString] string? path,
         [NonNegativeValue] int length = Span.Stackalloc
     ) =>
-        path is null ? RhaiException.Null : Span.Allocate(length, path, CompileFile);
+        path is null ? RhaiException.Parameter : Span.Allocate(length, path, CompileFile);
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -41,7 +41,7 @@ public static class Rhai
     /// <param name="path">The path containing the script to execute.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<AST, Exception> CompileFile(Span<byte> buffer, [PathReference, UriString] string? path) =>
+    public static Result<AST, RhaiException> CompileFile(Span<byte> buffer, [PathReference, UriString] string? path) =>
         path.CompileInner(buffer, true);
 
     /// <summary><c>eval</c> Function.</summary>
@@ -53,8 +53,9 @@ public static class Rhai
     /// <param name="length">The size of the internally allocated buffer.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<T, Exception> Eval<T>(string? script, [NonNegativeValue] int length = Span.Stackalloc) =>
-        script is null ? RhaiException.Null : Span.Allocate(length, script, Eval<T>);
+    public static Result<T, RhaiException> Eval<T>(string? script, [NonNegativeValue] int length = Span.Stackalloc)
+        where T : notnull =>
+        script is null ? RhaiException.Parameter : Span.Allocate(length, script, Eval<T>);
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -65,7 +66,9 @@ public static class Rhai
     /// <param name="script">The script to execute.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<T, Exception> Eval<T>(Span<byte> buffer, string? script) => script.EvalInner<T>(buffer);
+    public static Result<T, RhaiException> Eval<T>(Span<byte> buffer, string? script)
+        where T : notnull =>
+        script.EvalInner<T>(buffer);
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -76,11 +79,12 @@ public static class Rhai
     /// <param name="length">The size of the internally allocated buffer.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<T, Exception> EvalFile<T>(
+    public static Result<T, RhaiException> EvalFile<T>(
         [PathReference, UriString] string? path,
         [NonNegativeValue] int length = Span.Stackalloc
-    ) =>
-        path is null ? RhaiException.Null : Span.Allocate(length, path, EvalFile<T>);
+    )
+        where T : notnull =>
+        path is null ? RhaiException.Parameter : Span.Allocate(length, path, EvalFile<T>);
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -91,7 +95,8 @@ public static class Rhai
     /// <param name="path">The path containing the script to execute.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<T, Exception> EvalFile<T>(Span<byte> buffer, [PathReference, UriString] string? path) =>
+    public static Result<T, RhaiException> EvalFile<T>(Span<byte> buffer, [PathReference, UriString] string? path)
+        where T : notnull =>
         path.EvalInner<T>(buffer, true);
 
     /// <summary>Determines if a <see cref="string"/> is <see langword="null"/>.</summary>
@@ -103,7 +108,7 @@ public static class Rhai
     /// otherwise <see langword="false"/>.
     /// </returns>
     [MustUseReturnValue]
-    internal static bool IsNull(this string? script, Span<byte> buffer, out int length)
+    internal static bool IsNull([NotNullWhen(false)] this string? script, Span<byte> buffer, out int length)
     {
         length = 0;
 
@@ -121,11 +126,16 @@ public static class Rhai
     /// <param name="buffer">The buffer to write to.</param>
     /// <returns>A success <typeparamref name="T"/> if it can be deserialized, or an <see cref="Exception"/>.</returns>
     [MustUseReturnValue]
-    internal static Result<T, Exception> Deserialize<T>(this Result<bool, Exception> result, Span<byte> buffer)
+    internal static Result<T, RhaiException> Deserialize<T>(this Result<bool, RhaiException> result, Span<byte> buffer)
+        where T : notnull
     {
-        static TInner Get<TInner>(Memory<byte> x) => MessagePackSerializer.Deserialize<TInner>(x);
+        static TInner Get<TInner>(Memory<byte> x)
+            where TInner : notnull =>
+            MessagePackSerializer.Deserialize<TInner>(x);
 
-        static Result<TInner, Exception> TryGet<TInner>(Memory<byte> memory) => Try(Get<TInner>, memory);
+        static Result<TInner, RhaiException> TryGet<TInner>(Memory<byte> memory)
+            where TInner : notnull =>
+            Try(Get<TInner>, memory).MapErr(RhaiException.From);
 
         if (result.OutErr(out var err))
             return err;
@@ -134,7 +144,6 @@ public static class Rhai
             return RhaiException.Buffer;
 
         using SpanManager manager = new(buffer);
-
         var mem = manager.Memory;
 
         return result.Ok
@@ -143,22 +152,25 @@ public static class Rhai
     }
 
     [MustUseReturnValue]
-    static unsafe Result<AST, Exception> CompileInner(this string? script, Span<byte> buffer, bool isFile = false)
+    static unsafe Result<AST, RhaiException> CompileInner(this string? script, Span<byte> buffer, bool isFile = false)
     {
         if (script.IsNull(buffer, out var length))
-            return RhaiException.Null;
+            return RhaiException.Parameter;
 
         fixed (byte* pointer = buffer)
             return new Raw(script, pointer, length).Compile(isFile);
     }
 
     [MustUseReturnValue]
-    static unsafe Result<T, Exception> EvalInner<T>(this string? script, Span<byte> buffer, bool isFile = false)
+    static unsafe Result<T, RhaiException> EvalInner<T>(this string? script, Span<byte> buffer, bool isFile = false)
+        where T : notnull
     {
         if (script.IsNull(buffer, out var length))
-            return RhaiException.Null;
+            return RhaiException.Parameter;
 
         fixed (byte* pointer = buffer)
-            return new Raw(script, pointer, length).Eval(isFile).Deserialize<T>(buffer);
+            return new Raw(script, pointer, length).Eval(isFile).Deserialize<T>(buffer) is var t && !t.IsNull()
+                ? t
+                : RhaiException.Return;
     }
 }
