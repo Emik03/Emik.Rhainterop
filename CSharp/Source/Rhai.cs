@@ -12,8 +12,14 @@ public static class Rhai
     /// <param name="length">The size of the internally allocated buffer.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [Pure]
-    public static Result<AST, RhaiException> Compile(string? script, [NonNegativeValue] int length = Span.Stackalloc) =>
-        script is null ? RhaiException.Parameter : Span.Allocate(length, script, Compile);
+    public static Result<AST, RhaiException> Compile(string? script, [NonNegativeValue] int length = Span.MaxStackalloc)
+    {
+        if (script is null)
+            return RhaiException.Parameter;
+
+        using var _ = length.Alloc(out Span<byte> span);
+        return Compile(span, script);
+    }
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -31,9 +37,15 @@ public static class Rhai
     [MustUseReturnValue]
     public static Result<AST, RhaiException> CompileFile(
         [PathReference, UriString] string? path,
-        [NonNegativeValue] int length = Span.Stackalloc
-    ) =>
-        path is null ? RhaiException.Parameter : Span.Allocate(length, path, CompileFile);
+        [NonNegativeValue] int length = Span.MaxStackalloc
+    )
+    {
+        if (path is null)
+            return RhaiException.Parameter;
+
+        using var _ = length.Alloc(out Span<byte> span);
+        return CompileFile(span, path);
+    }
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -53,9 +65,15 @@ public static class Rhai
     /// <param name="length">The size of the internally allocated buffer.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-    public static Result<T, RhaiException> Eval<T>(string? script, [NonNegativeValue] int length = Span.Stackalloc)
-        where T : notnull =>
-        script is null ? RhaiException.Parameter : Span.Allocate(length, script, Eval<T>);
+    public static Result<T, RhaiException> Eval<T>(string? script, [NonNegativeValue] int length = Span.MaxStackalloc)
+        where T : notnull
+    {
+        if (script is null)
+            return RhaiException.Parameter;
+
+        using var _ = length.Alloc(out Span<byte> span);
+        return Eval<T>(span, script);
+    }
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -81,10 +99,16 @@ public static class Rhai
     [MustUseReturnValue]
     public static Result<T, RhaiException> EvalFile<T>(
         [PathReference, UriString] string? path,
-        [NonNegativeValue] int length = Span.Stackalloc
+        [NonNegativeValue] int length = Span.MaxStackalloc
     )
-        where T : notnull =>
-        path is null ? RhaiException.Parameter : Span.Allocate(length, path, EvalFile<T>);
+        where T : notnull
+    {
+        if (path is null)
+            return RhaiException.Parameter;
+
+        using var _ = length.Alloc(out Span<byte> span);
+        return EvalFile<T>(span, path);
+    }
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>
@@ -126,12 +150,15 @@ public static class Rhai
     /// <param name="buffer">The buffer to write to.</param>
     /// <returns>A success <typeparamref name="T"/> if it can be deserialized, or an <see cref="Exception"/>.</returns>
     [MustUseReturnValue]
-    internal static Result<T, RhaiException> Deserialize<T>(this Result<bool, RhaiException> result, Span<byte> buffer)
+    internal static unsafe Result<T, RhaiException> Deserialize<T>(
+        this Result<bool, RhaiException> result,
+        Span<byte> buffer
+    )
         where T : notnull
     {
-        static TInner Get<TInner>(Memory<byte> x)
+        static TInner Get<TInner>(Memory<byte> memory)
             where TInner : notnull =>
-            MessagePackSerializer.Deserialize<TInner>(x);
+            MessagePackSerializer.Deserialize<TInner>(memory);
 
         static Result<TInner, RhaiException> TryGet<TInner>(Memory<byte> memory)
             where TInner : notnull =>
@@ -143,12 +170,15 @@ public static class Rhai
         if (buffer.IsEmpty)
             return RhaiException.Buffer;
 
-        using SpanManager manager = new(buffer);
-        var mem = manager.Memory;
+        fixed (byte* pointer = buffer)
+        {
+            using SpanManager manager = new(pointer, buffer.Length);
+            var mem = manager.Memory;
 
-        return result.Ok
-            ? TryGet<T>(mem)
-            : TryGet<string>(mem).Map(RhaiException.From).ErrOrCast();
+            return result.Ok
+                ? TryGet<T>(mem)
+                : TryGet<string>(mem).Map(RhaiException.From).ErrOrCast();
+        }
     }
 
     [MustUseReturnValue]
@@ -169,7 +199,7 @@ public static class Rhai
             return RhaiException.Parameter;
 
         fixed (byte* pointer = buffer)
-            return new Raw(script, pointer, length).Eval(isFile).Deserialize<T>(buffer) is var t && !t.IsNull()
+            return new Raw(script, pointer, length).Eval(isFile).Deserialize<T>(buffer) is { IsOk: true, Ok: var t }
                 ? t
                 : RhaiException.Return;
     }

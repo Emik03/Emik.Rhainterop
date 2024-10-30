@@ -1,13 +1,14 @@
 <!-- SPDX-License-Identifier: MPL-2.0 -->
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <FileVersion>0.1</FileVersion>
         <TargetFrameworks>net7.0;netstandard2.1</TargetFrameworks>
         <RepositoryUrl>https://github.com/Emik03/Emik.Rhainterop</RepositoryUrl>
         <Description>Bridge between Rhai and C#. Allows you to invoke and receive values from scripts.</Description>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Emik.Results" Version="2.0.1" PrivateAssets="all"/>
-        <PackageReference Include="MessagePack" Version="2.4.59" PrivateAssets="all"/>
-        <PackageReference Include="MessagePackAnalyzer" Version="2.4.59" PrivateAssets="all"/>
+        <PackageReference Include="Emik.Results" Version="4.0.0" PrivateAssets="all"/>
+        <PackageReference Include="MessagePack" Version="3.0.238-rc.1" PrivateAssets="all"/>
+        <PackageReference Include="MessagePackAnalyzer" Version="3.0.238-rc.1" PrivateAssets="all"/>
     </ItemGroup>
 </Project>

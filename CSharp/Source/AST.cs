@@ -32,8 +32,9 @@ public sealed class AST : ICloneable,
 
     /// <inheritdoc />
     [Pure]
+#pragma warning disable IDISP005
     public object Clone() => new AST(Id);
-
+#pragma warning restore IDISP005
     /// <inheritdoc />
     [Pure]
     public int CompareTo(object? obj) => CompareTo(obj as AST);
@@ -193,8 +194,9 @@ public sealed class AST : ICloneable,
     public bool Equals(AST? other) => other is not null && Id == other.Id;
 
     /// <summary>Finalizes an instance of the <see cref="AST"/> class.</summary>
+#pragma warning disable IDISP023
     ~AST() => Dispose();
-
+#pragma warning restore IDISP023
     /// <summary>Implicitly calls <see cref="Id"/>.</summary>
     /// <param name="ast">The <see cref="AST"/> to grab <see cref="Id"/>.</param>
     /// <returns>The value <see cref="Id"/>, or 0 if <see langword="null"/>.</returns>
@@ -221,11 +223,12 @@ public sealed class AST : ICloneable,
     /// <param name="length">The size of the internally allocated buffer.</param>
     /// <returns>The resulting type from the expression given, or a runtime error from Rhai.</returns>
     [MustUseReturnValue]
-
-    // ReSharper disable once LambdaShouldNotCaptureContext
-    public Result<T, RhaiException> Eval<T>(int length = Span.Stackalloc)
-        where T : notnull => // ReSharper disable once LambdaShouldNotCaptureContext
-        Span.Allocate(length, Eval<T>);
+    public Result<T, RhaiException> Eval<T>(int length = Span.MaxStackalloc)
+        where T : notnull
+    {
+        using var _ = length.Alloc(out Span<byte> span);
+        return Eval<T>(span);
+    }
 
     /// <summary><c>eval</c> Function.</summary>
     /// <remarks><para>Or "How to Shoot Yourself in the Foot even Easier".</para></remarks>

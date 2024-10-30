@@ -12,15 +12,14 @@ sealed class SpanManager : MemoryManager<byte>
 
     /// <summary>Initializes a new instance of the <see cref="SpanManager"/> class.</summary>
     /// <remarks><para>
-    /// It is assumed that <paramref name="span"/> is already unmanaged or externally pinned.
+    /// It is assumed that <paramref name="pointer"/> is already unmanaged or externally pinned.
     /// </para></remarks>
-    /// <param name="span">The <see cref="Span{T}"/> to expose into a <see cref="Memory{T}"/>.</param>
-    internal unsafe SpanManager(Span<byte> span)
+    /// <param name="pointer">The pointer to the mutable buffer.</param>
+    /// <param name="length">The length of the mutable buffer.</param>
+    internal unsafe SpanManager(byte* pointer, int length)
     {
-        _length = span.Length;
-
-        fixed (byte* ptr = span)
-            _pointer = ptr;
+        _pointer = pointer;
+        _length = length;
     }
 
     /// <inheritdoc />
@@ -38,5 +37,7 @@ sealed class SpanManager : MemoryManager<byte>
     public override unsafe Span<byte> GetSpan() => new(_pointer, _length);
 
     /// <inheritdoc />
+#pragma warning disable IDISP010
     protected override void Dispose(bool disposing) { }
+#pragma warning restore IDISP010
 }

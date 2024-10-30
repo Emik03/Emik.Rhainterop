@@ -4,23 +4,21 @@ version = "0.1.0"
 edition = "2021"
 authors = ["emik"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 decimal = "2.1.0"
-memflow = { version = "0.2.0-beta10", features = ["plugins"] }
-rhai = { version = "1.12.0", features = ["bin-features", "core-error", "debugging", "decimal", "hashbrown", "internals", "libm", "metadata", "rustyline", "serde", "serde_json"] }
-rhai-autodocs = "0.1.0"
-rhai_codegen = { version = "1.5.0", features = ["metadata"] }
-#rhai-dylib = "0.1.4"
-rhai-fs = { version = "0.1.2", features = ["metadata"] }
-rhai-url = "0.0.2"
+memflow = { version = "0.2.3", features = ["plugins"] }
+rhai = { version = "1.19.0", features = ["bin-features", "core-error", "debugging", "decimal", "hashbrown", "internals", "libm", "metadata", "rustyline", "serde", "serde_json"] }
+rhai-autodocs = "0.7.0"
+rhai_codegen = { version = "2.2.0", features = ["metadata"] }
+#rhai-dylib = "0.4.0"
+rhai-fs = { version = "0.1.3", features = ["metadata"] }
+rhai-url = "0.0.5"
 #rhai-memflow = "0.1.2"
-rhai-rand = { version = "0.1.4", features = ["array", "float", "decimal", "metadata", "rust_decimal"] }
-rhai-sci = { version = "0.1.7", features = ["csv-sniffer", "io", "metadata", "minreq", "polars", "temp-file", "url"] }
-rmp = "0.8.11"
-rmp-serde = "1.1.1"
-serde = { version = "1.0.152", features = ["derive"] }
+rhai-rand = { version = "0.1.6", features = ["array", "float", "decimal", "metadata", "rust_decimal"] }
+rhai-sci = { version = "0.2.1", features = ["csv-sniffer", "io", "metadata", "minreq", "polars", "temp-file", "url"] }
+rmp = "0.8.14"
+rmp-serde = "1.3.0"
+serde = { version = "1.0.214", features = ["derive"] }
 
 [lib]
 crate-type = ["cdylib"]
